@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: TASK-APIGATEWAY
+
+  cloud:
+    gateway:
+      routes:
+        - id: TASK-USER-SERVICE
+          uri: lb://TASK-USER-SERVICE
+          predicates:
+            - Path=/register,/authorization,/user/**
+          filters:
+            - AuthenticationFilter # Reference your custom authentication filter
+
+        - id: PROJECT-SERVICE
+          uri: lb://PROJECT-SERVICE
+          predicates:
+            - Path=/project/**
+          filters:
+            - AuthenticationFilter # Reference your custom authentication filter
+
+
+        - id: TASK-SERVICE
+          uri: lb://TASK-SERVICE
+          predicates:
+            - Path=/task/**
+          filters:
+            - AuthenticationFilter # Reference your custom authentication filter
+
+        - id: Task-Security
+          uri: lb://Task-Security
+          predicates:
+            - Path=/auth/**
+
+        - id: COMMENT-SERVICE
+          uri: lb://COMMENT-SERVICE
+          predicates:
+            - Path=/comment/**
+          filters:
+            - AuthenticationFilter # Reference your custom authentication filter
+
+server:
+  port: 7777
+
+eureka:
+  instance:
+    client:
+      serverUrl:
+        defaultZone: http://localhost:8761/eureka/
